@@ -1,3 +1,6 @@
+# Directory for stuff that goes to gh-pages
+dist
+
 # vim stuff
 *.swp
 *.swo

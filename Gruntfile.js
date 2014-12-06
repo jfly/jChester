@@ -48,11 +48,34 @@ module.exports = function(grunt) {
       }
     },
 
+    symlink: {
+      node_modules: {
+        // dest -> src
+        dest: 'dist/node_modules',
+        src: 'node_modules'
+      },
+      gitignore: {
+        // dest -> src
+        dest: 'dist/.gitignore',
+        src: '.gitignore'
+      },
+    },
+
     includereplace: {
-      jquery: {
+      jqueryLocal: {
         options: {
           globals: {
-            jquerySrc: '/node_modules/jquery/dist/jquery.js',//<<<
+            jquerySrc: '/node_modules/jquery/dist/jquery.js',
+          },
+        },
+        files: [
+          {src: '**/*.html', dest: 'dist/', expand: true, cwd: 'demo'},
+        ],
+      },
+      jqueryRemote: {
+        options: {
+          globals: {
+            jquerySrc: '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js',
           },
         },
         files: [
@@ -90,7 +113,7 @@ module.exports = function(grunt) {
 
     watch: {
       files: ['src/**', 'demo/**'],
-      tasks: ['jshint', 'default'],
+      tasks: ['default'],
       options: {
         livereload: true,
       }
@@ -105,11 +128,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-include-replace');
   grunt.loadNpmTasks('grunt-gh-pages');
+  grunt.loadNpmTasks('grunt-contrib-symlink');
 
-  grunt.registerTask("default", ["jshint", "concat", "uglify", "includereplace"]);
+  grunt.registerTask("everythingButHtml", ["symlink", "jshint", "concat", "uglify"]);
+  grunt.registerTask("default", ["everythingButHtml", "includereplace:jqueryLocal"]);
   grunt.registerTask("travis", ["jshint"]);
 
   grunt.registerTask("serve", ["default", "connect", "watch"]);
-  grunt.registerTask("publish", ["default", "gh-pages"]);
+  grunt.registerTask("publish", ["everythingButHtml", "includereplace:jqueryRemote", "gh-pages"]);
 
 };
