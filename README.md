@@ -14,6 +14,6 @@ jChester [![Build Status](https://travis-ci.org/jfly/jChester.png?branch=master)
 ## To update gh-pages or release
 
 - Update "version" in `package.json`
-- `grunt gh-pages`
+- `grunt publish`
 - cd into `.grunt/grunt-gh-pages/gh-pages/src` and push commits to the remote
   gh-pages branch. Don't forget to push tags if doing a new release!

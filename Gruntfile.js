@@ -110,5 +110,6 @@ module.exports = function(grunt) {
   grunt.registerTask("travis", ["jshint"]);
 
   grunt.registerTask("serve", ["default", "connect", "watch"]);
+  grunt.registerTask("publish", ["default", "gh-pages"]);
 
 };
