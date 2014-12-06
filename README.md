@@ -11,7 +11,9 @@ jChester [![Build Status](https://travis-ci.org/jfly/jChester.png?branch=master)
   [grunt-cli](http://gruntjs.com/getting-started#installing-the-cli)) - Starts
   a server with livereload configured. Great for development!
 
-## To release
+## To update gh-pages or release
 
 - Update "version" in `package.json`
-- `grunt release`
+- `grunt gh-pages`
+- cd into `.grunt/grunt-gh-pages/gh-pages/src` and push commits to the remote
+  gh-pages branch. Don't forget to push tags if doing a new release!
