@@ -1,4 +1,4 @@
-jChester
+jChester [![Build Status](https://travis-ci.org/jfly/jChester.png?branch=master)](https://travis-ci.org/jfly/jChester)
 ========
 
 ## Setup
