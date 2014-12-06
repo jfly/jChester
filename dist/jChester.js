@@ -1,5 +1,5 @@
 /*
- *  jChester - v0.0.1
+ *  jChester - v0.0.2
  *  A time entry component for speedcubing solves.
  *  https://github.com/jfly/jChester
  *

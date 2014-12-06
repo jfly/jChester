@@ -48,16 +48,39 @@ module.exports = function(grunt) {
       }
 		},
 
+    includereplace: {
+      jquery: {
+        options: {
+          globals: {
+            jquerySrc: '/node_modules/jquery/dist/jquery.js',//<<<
+          },
+        },
+        files: [
+          {src: '**/*.html', dest: 'dist/', expand: true, cwd: 'demo'},
+        ],
+      }
+    },
+
+    'gh-pages': {
+      options: {
+        base: 'dist',
+        push: true,
+        tag: 'v<%= pkg.version %>',
+        message: 'Commiting version v<%= pkg.version %>'
+      },
+      src: ['**', '.gitignore']
+    },
+
     connect: {
       server: {
         options: {
           port: 9001,
-          base: '.',
+          base: 'dist',
           livereload: true,
           open: {
             callback: function() {
               var baseUrl = grunt.config.process('http://localhost:<%= connect.server.options.port%>');
-              var demoUrl = baseUrl + "/demo/";
+              var demoUrl = baseUrl;
               console.log("Server started! View demo at " + demoUrl);
             }
           }
@@ -66,7 +89,7 @@ module.exports = function(grunt) {
     },
 
     watch: {
-      files: ['<%= jshint.files %>', 'demo/**'],
+      files: ['src/**', 'demo/**'],
       tasks: ['jshint', 'default'],
       options: {
         livereload: true,
@@ -80,8 +103,10 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-include-replace');
+  grunt.loadNpmTasks('grunt-gh-pages');
 
-	grunt.registerTask("default", ["jshint", "concat", "uglify"]);
+	grunt.registerTask("default", ["jshint", "concat", "uglify", "includereplace"]);
 	grunt.registerTask("travis", ["jshint"]);
 
 	grunt.registerTask("serve", ["default", "connect", "watch"]);
