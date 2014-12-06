@@ -1,2 +1,1 @@
-# Ignoring node_modules here because we're commiting to gh-pages.
-node_modules
+../.gitignore
