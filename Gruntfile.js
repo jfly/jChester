@@ -64,7 +64,7 @@ module.exports = function(grunt) {
     'gh-pages': {
       options: {
         base: 'dist',
-        push: true,
+        push: false,
         tag: 'v<%= pkg.version %>',
         message: 'Commiting version v<%= pkg.version %>'
       },
