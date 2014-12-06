@@ -10,3 +10,8 @@ jChester [![Build Status](https://travis-ci.org/jfly/jChester.png?branch=master)
 - `npm start` (or `grunt serve` if you've installed
   [grunt-cli](http://gruntjs.com/getting-started#installing-the-cli)) - Starts
   a server with livereload configured. Great for development!
+
+## To release
+
+- Update "version" in `package.json`
+- `grunt release`

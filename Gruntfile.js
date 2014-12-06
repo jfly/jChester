@@ -64,7 +64,7 @@ module.exports = function(grunt) {
     'gh-pages': {
       options: {
         base: 'dist',
-        push: false,
+        push: true,
         tag: 'v<%= pkg.version %>',
         message: 'Commiting version v<%= pkg.version %>'
       },
@@ -110,5 +110,6 @@ module.exports = function(grunt) {
   grunt.registerTask("travis", ["jshint"]);
 
   grunt.registerTask("serve", ["default", "connect", "watch"]);
+  grunt.registerTask("release", ["gh-pages"]);
 
 };
