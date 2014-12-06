@@ -1,0 +1,51 @@
+{
+  "name": "jChester",
+  "title": "jChester",
+  "description": "A time entry component for speedcubing solves.",
+  "homepage": "https://github.com/jfly/jChester",
+  "bugs": "https://github.com/jfly/jChester/issues",
+  "docs": "https://github.com/jfly/jChester#readme",
+  "download": "https://github.com/jfly/jChester/archive/master.zip",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jfly/jChester.git"
+  },
+  "keywords": [
+    "jquery",
+    "jchester",
+    "speedcubing"
+  ],
+  "version": "0.0.1",
+  "author": {
+    "name": "Jeremy Fleischman",
+    "email": "jeremyfleischman@gmail.com",
+    "url": "https://github.com/jfly"
+  },
+  "maintainers": [
+    {
+      "name": "Jeremy Fleischman",
+      "email": "jeremyfleischman@gmail.com",
+      "url": "https://github.com/jfly"
+    }
+  ],
+  "licenses": [
+    {
+      "type": "GPL-3.0"
+    }
+  ],
+  "dependencies": {
+    "jquery": ">=1.4"
+  },
+  "devDependencies": {
+    "grunt": "0.4.5",
+    "grunt-cli": "0.1.13",
+    "grunt-contrib-concat": "0.5.0",
+    "grunt-contrib-connect": "0.9.0",
+    "grunt-contrib-jshint": "0.10.0",
+    "grunt-contrib-uglify": "0.6.0",
+    "grunt-contrib-watch": "0.6.1"
+  },
+  "scripts": {
+    "test": "grunt travis --verbose"
+  }
+}
