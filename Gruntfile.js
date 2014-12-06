@@ -1,52 +1,52 @@
 module.exports = function(grunt) {
 
-	grunt.initConfig({
+  grunt.initConfig({
 
-		// Import package manifest
-		pkg: grunt.file.readJSON("package.json"),
+    // Import package manifest
+    pkg: grunt.file.readJSON("package.json"),
 
-		// Banner definitions
-		meta: {
-			banner: "/*\n" +
-				" *  <%= pkg.title || pkg.name %> - v<%= pkg.version %>\n" +
-				" *  <%= pkg.description %>\n" +
-				" *  <%= pkg.homepage %>\n" +
-				" *\n" +
-				" *  Made by <%= pkg.author.name %>\n" +
-				" *  Under <%= pkg.licenses[0].type %> License\n" +
-				" */\n"
-		},
+    // Banner definitions
+    meta: {
+      banner: "/*\n" +
+        " *  <%= pkg.title || pkg.name %> - v<%= pkg.version %>\n" +
+        " *  <%= pkg.description %>\n" +
+        " *  <%= pkg.homepage %>\n" +
+        " *\n" +
+        " *  Made by <%= pkg.author.name %>\n" +
+        " *  Under <%= pkg.licenses[0].type %> License\n" +
+        " */\n"
+    },
 
-		// Concat definitions
-		concat: {
-			dist: {
-				src: ["src/**/*.js"],
-				dest: "dist/<%= pkg.name %>.js"
-			},
-			options: {
-				banner: "<%= meta.banner %>"
-			}
-		},
+    // Concat definitions
+    concat: {
+      dist: {
+        src: ["src/**/*.js"],
+        dest: "dist/<%= pkg.name %>.js"
+      },
+      options: {
+        banner: "<%= meta.banner %>"
+      }
+    },
 
-		// Lint definitions
-		jshint: {
-			files: ["Gruntfile.js", "src/**/*.js"],
-			options: {
-				jshintrc: ".jshintrc"
-			}
-		},
+    // Lint definitions
+    jshint: {
+      files: ["Gruntfile.js", "src/**/*.js"],
+      options: {
+        jshintrc: ".jshintrc"
+      }
+    },
 
-		// Minify definitions
-		uglify: {
-			options: {
-				banner: "<%= meta.banner %>"
-			},
+    // Minify definitions
+    uglify: {
+      options: {
+        banner: "<%= meta.banner %>"
+      },
       my_target: {
         files: {
           'dist/<%= pkg.name %>.min.js': ['<%= concat.dist.dest %>']
         }
       }
-		},
+    },
 
     includereplace: {
       jquery: {
@@ -96,19 +96,19 @@ module.exports = function(grunt) {
       }
     },
 
-	});
+  });
 
-	grunt.loadNpmTasks("grunt-contrib-concat");
-	grunt.loadNpmTasks("grunt-contrib-jshint");
-	grunt.loadNpmTasks("grunt-contrib-uglify");
+  grunt.loadNpmTasks("grunt-contrib-concat");
+  grunt.loadNpmTasks("grunt-contrib-jshint");
+  grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-include-replace');
   grunt.loadNpmTasks('grunt-gh-pages');
 
-	grunt.registerTask("default", ["jshint", "concat", "uglify", "includereplace"]);
-	grunt.registerTask("travis", ["jshint"]);
+  grunt.registerTask("default", ["jshint", "concat", "uglify", "includereplace"]);
+  grunt.registerTask("travis", ["jshint"]);
 
-	grunt.registerTask("serve", ["default", "connect", "watch"]);
+  grunt.registerTask("serve", ["default", "connect", "watch"]);
 
 };
