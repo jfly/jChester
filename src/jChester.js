@@ -1,6 +1,9 @@
 (function($) {
 
   $.fn.jChester = function(method, _settings) {
+    if(!this.is('div')) {
+      throw "jChester can only be applied to divs";
+    }
     if($.isPlainObject(method)) {
       _settings = method;
       method = null;
@@ -32,7 +35,11 @@
           data.$formGroup.removeClass('has-warning');
         } catch(e) {
           data.solveTime = null;
-          data.$helpBlock.text(e);
+          if(val.length === 0) {
+            data.$helpBlock.text("Please enter a time");
+          } else {
+            data.$helpBlock.text(e);
+          }
           data.$formGroup.addClass('has-warning');
         }
       };
@@ -55,8 +62,14 @@
       return data.solveTime;
     }
 
-    if(settings.solveTime) {
+    if(settings.solveTime === null) {
+      // If settings.solveTime is explicitly set to null, clear
+      // the current input and warning state.
+      data.$input.val('');
+      data.$input.trigger('input');
+    } else if(settings.solveTime) {
       data.$input.val($.solveTimeToStopwatchFormat(settings.solveTime));
+      data.$input.trigger('input');
     }
     return that;
   };
@@ -71,12 +84,14 @@
     stopwatchFormatToSolveTime: function(stopwatchFormat) {
       if(stopwatchFormat.toUpperCase() === 'DNF') {
         return {
-          penalties: 'DNF',
+          puzzlesSolved: 0,
+          puzzlesAttempted: 1,
         };
       }
       if(stopwatchFormat.toUpperCase() === 'DNS') {
         return {
-          penalties: 'DNS',
+          puzzlesSolved: 0,
+          puzzlesAttempted: 0,
         };
       }
       var m = stopwatchFormat.match(/^(?:(\d*):)?(\d+)(?:[.,](\d*))?$/);
@@ -98,13 +113,53 @@
         decimals: decimals,
       };
     },
-    solveTimeToStopwatchFormat: function(solveTime) {
-      if(solveTime.penalties && solveTime.penalties.indexOf('DNF') >= 0) {
-        return "DNF";
+    solveTimeIsDNF: function(solveTime) {
+      if(typeof solveTime.puzzlesSolved !== 'undefined' && typeof solveTime.puzzlesAttempted !== 'undefined') {
+        if(solveTime.puzzlesAttempted === 1) {
+          // This is *not* a multi attempt.
+          if(solveTime.puzzlesSolved === 0) {
+            return true;
+          }
+        } else if(solveTime.puzzlesAttempted > 1) {
+          // By https://www.worldcubeassociation.org/regulations/#H1a,
+          // multibld results must have at least 2 puzzles attempted.
+          /* From https://www.worldcubeassociation.org/regulations/#9f12c
+          9f12c) For Multiple Blindfolded Solving, rankings are
+          assessed based on number of puzzles solved minus the number
+          of puzzles not solved, where a greater difference is better.
+          If the difference is less than 0, or if only 1 puzzle is
+          solved, the attempt is considered unsolved (DNF). If
+          competitors achieve the same result, rankings are assessed
+          based on total time, where the shorter recorded time is
+          better. If competitors achieve the same result and the same
+          time, rankings are assessed based on the number of puzzles
+          the competitors failed to solve, where fewer unsolved
+          puzzles is better.
+          */
+          var puzzleUnsolved = solveTime.puzzlesAttempted - solveTime.puzzlesSolved;
+          var solvedMinusUnsolved = solveTime.puzzlesSolved - puzzleUnsolved;
+          if(solvedMinusUnsolved < 0 || solveTime.puzzlesSolved === 1) {
+            return true;
+          }
+        }
       }
-      if(solveTime.penalties && solveTime.penalties.indexOf('DNS') >= 0) {
+      return false;
+    },
+    solveTimeIsDNS: function(solveTime) {
+      if(typeof solveTime.puzzlesAttempted !== 'undefined') {
+        if(solveTime.puzzlesAttempted === 0) {
+          return true;
+        }
+      }
+      return false;
+    },
+    solveTimeToStopwatchFormat: function(solveTime) {
+      if($.solveTimeIsDNF(solveTime)) {
+        return "DNF";
+      } else if($.solveTimeIsDNS(solveTime)) {
         return "DNS";
       }
+
       var millis = solveTime.millis;
       var minutesField = Math.floor(millis / (60*1000));
       millis %= (60*1000);
