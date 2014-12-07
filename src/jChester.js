@@ -26,7 +26,7 @@
       var updateSolveTime = function() {
         var val = data.$input.val();
         try {
-          var solveTime = $.clockFormatToSolveTime(val);
+          var solveTime = $.stopwatchFormatToSolveTime(val);
           data.solveTime = solveTime;
           data.$helpBlock.text('');
           data.$formGroup.removeClass('has-warning');
@@ -56,7 +56,7 @@
     }
 
     if(settings.solveTime) {
-      data.$input.val($.solveTimeToClockFormat(settings.solveTime));
+      data.$input.val($.solveTimeToStopwatchFormat(settings.solveTime));
     }
     return that;
   };
@@ -68,20 +68,20 @@
   var MILLIS_PER_SECOND = 1000;
   var MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
   $.extend({
-    clockFormatToSolveTime: function(clockFormat) {
-      if(clockFormat.toUpperCase() === 'DNF') {
+    stopwatchFormatToSolveTime: function(stopwatchFormat) {
+      if(stopwatchFormat.toUpperCase() === 'DNF') {
         return {
           penalties: 'DNF',
         };
       }
-      if(clockFormat.toUpperCase() === 'DNS') {
+      if(stopwatchFormat.toUpperCase() === 'DNS') {
         return {
           penalties: 'DNS',
         };
       }
-      var m = clockFormat.match(/^(?:(\d*):)?(\d+)(?:[.,](\d*))?$/);
+      var m = stopwatchFormat.match(/^(?:(\d*):)?(\d+)(?:[.,](\d*))?$/);
       if(!m) {
-        throw "Invalid clock format";
+        throw "Invalid stopwatch format";
       }
 
       var minutes = parseInt(m[1] || "0");
@@ -98,7 +98,7 @@
         decimals: decimals,
       };
     },
-    solveTimeToClockFormat: function(solveTime) {
+    solveTimeToStopwatchFormat: function(solveTime) {
       if(solveTime.penalties && solveTime.penalties.indexOf('DNF') >= 0) {
         return "DNF";
       }
@@ -120,11 +120,11 @@
         return padded;
       }
 
-      var clockFormat;
+      var stopwatchFormat;
       if(minutesField) {
-        clockFormat = minutesField + ":" + pad(secondsField, "0", 2);
+        stopwatchFormat = minutesField + ":" + pad(secondsField, "0", 2);
       } else {
-        clockFormat = "" + secondsField;
+        stopwatchFormat = "" + secondsField;
       }
       var decimals = solveTime.decimals;
       if(decimals > 0) {
@@ -132,12 +132,12 @@
         // accuracy we have.
         decimals = Math.min(3, decimals);
         var millisStr = pad(millis, "0", 3);
-        clockFormat += ".";
+        stopwatchFormat += ".";
         for(var i = 0; i < decimals; i++) {
-          clockFormat += millisStr.charAt(i);
+          stopwatchFormat += millisStr.charAt(i);
         }
       }
-      return clockFormat;
+      return stopwatchFormat;
     },
   });
 

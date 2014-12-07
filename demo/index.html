@@ -10,7 +10,7 @@
     <script>
       $(function() {
         var $inputTime = $("div.jChester").jChester({
-          solveTime: $.clockFormatToSolveTime("4.242")
+          solveTime: $.stopwatchFormatToSolveTime("1:4.242")
         });
         $inputTime.on("solveTimeInput", function(e, solveTime) {
           console.log(solveTime);
@@ -48,7 +48,7 @@
       <pre>&lt;script&gt;
   $(function() {
     var $inputTime = $(&quot;div.jChester&quot;).jChester({
-      solveTime: $.clockFormatToSolveTime(&quot;4.242&quot;)
+      solveTime: $.stopwatchFormatToSolveTime(&quot;1:4.242&quot;)
     });
     $inputTime.on(&quot;solveTimeInput&quot;, function(e, solveTime) {
       console.log(solveTime);
@@ -85,19 +85,19 @@
             </td>
           </tr>
           <tr>
-            <td><code>$.clockFormatToSolveTime(String)</code></td>
+            <td><code>$.stopwatchFormatToSolveTime(String)</code></td>
             <td>
-              Converts a clock formatted string to a SolveTime.
+              Converts a stopwatch formatted string to a SolveTime.
               For example:<br>
-              <code>$.clockFormatToSolveTime("42.23") = { millis: 42230, decimals: 2 };</code>
+              <code>$.stopwatchFormatToSolveTime("1:4.242") = { millis: 64242, decimals: 3 };</code>
             </td>
           </tr>
           <tr>
-            <td><code>$.solveTimeToClockFormat(SolveTime)</code></td>
+            <td><code>$.solveTimeToStopwatchFormat(SolveTime)</code></td>
             <td>
-              Converts a SolveTime to a pretty clock formatted string.
+              Converts a SolveTime to a pretty stopwatch formatted string.
               For example:<br>
-              <code>$.solveTimeToClockFormat({ millis: 42230, decimals: 2 }) = "42.23"</code>
+              <code>$.solveTimeToStopwatchFormat({ millis: 64242, decimals: 3 }) = "1:4.242"</code>
             </td>
           </tr>
         </tbody>
