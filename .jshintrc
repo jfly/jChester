@@ -9,6 +9,6 @@
 	"onevar": true,
 	"quotmark": "true",
 	"smarttabs": true,
-	"unused": true,
+	"unused": false,
 	"node": true
 }

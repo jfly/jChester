@@ -4,16 +4,121 @@
     <title>jChester</title>
     <script src="@@jquerySrc"></script>
     <script src="jChester.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
   </head>
   <body>
     <script>
       $(function() {
-        $("#element").jChester({
-          color: "red",
+        var $inputTime = $("div.jChester").jChester({
+          solveTime: {
+            millis: 4242,
+            decimals: 3,
+          }
+        });
+        $inputTime.on("solveTimeInput", function(e, solveTime) {
+          console.log(solveTime);
+        });
+        $inputTime.on("solveTimeChange", function(e, solveTime) {
+          console.log(solveTime);
         });
       });
     </script>
 
-    <div id="element">Hello, world!</div>
+    <div class="container">
+      <h3>jChester</h3>
+
+      <p>
+        jChester is a jQuery plugin designed specifically for entering
+        speedsolving times. It currently uses
+        <a href="http://getbootstrap.com/">Bootstrap 3</a>
+        for styling, but the plan is to make it standalone in the near future.
+      </p>
+
+      <p>
+        jChester deals with SolveTimes, which have the following format:
+        <pre>{
+  millis: Integer,      // The number of milliseconds (after any penalties have been applied).
+  decimals: Integer,    // The number of decimal places of accuracy in millis, when treated a number of seconds in base 10.
+  penalties: [ String ] // An array of penalties applied to the solve. Currently supports "DNF" and "DNS", which are mutually exclusive.
+}</pre>
+      </p>
+
+      <h4>Demo</h4>
+      <div class="jChester"></div>
+      <h5>Source</h5>
+      <pre>&lt;script&gt;
+  $(function() {
+    var $inputTime = $(&quot;div.jChester&quot;).jChester({
+      solveTime: {
+        millis: 4242,
+        decimals: 3,
+      }
+    });
+    $inputTime.on(&quot;solveTimeInput&quot;, function(e, solveTime) {
+      console.log(solveTime);
+    });
+    $inputTime.on(&quot;solveTimeChange&quot;, function(e, solveTime) {
+      console.log(solveTime);
+    });
+  });
+&lt;/script&gt;
+
+&lt;div class=&quot;jChester&quot;&gt;</pre>
+
+      <h4>Methods</h4>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>$('div').jChester(options)</code></td>
+            <td>
+              Initialize jChester on a jQuery compenent (must be a div!) if
+              jChester is not already initialized on it.
+              The jChester's time will be set to options.solveTime, if given.
+            </td>
+          </tr>
+          <tr>
+            <td><code>$('div').jChester('getSolveTime')</code></td>
+            <td>
+              Returns the current SolveTime, which may be null.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>Events</h4>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>solveTimeInput</td>
+            <td>
+              Fires whenever the current SolveTime changes.
+              The current SolveTime is passed as an extra parameter.
+            </td>
+          </tr>
+          <tr>
+            <td>solveTimeChange</td>
+            <td>
+              Fires when the user confirms the current SolveTime, by pressing
+              enter.
+              The current SolveTime is passed as an extra parameter.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+
   </body>
 </html>
