@@ -1,5 +1,5 @@
 /*
- *  jChester - v0.1.0
+ *  jChester - v0.2.0
  *  A time entry component for speedcubing solves.
  *  https://github.com/jfly/jChester
  *
@@ -34,7 +34,7 @@
       var updateSolveTime = function() {
         var val = data.$input.val();
         try {
-          var solveTime = $.parseClockFormat(val);
+          var solveTime = $.clockFormatToSolveTime(val);
           data.solveTime = solveTime;
           data.$helpBlock.text('');
           data.$formGroup.removeClass('has-warning');
@@ -64,7 +64,7 @@
     }
 
     if(settings.solveTime) {
-      data.$input.val($.toClockFormat(settings.solveTime));
+      data.$input.val($.solveTimeToClockFormat(settings.solveTime));
     }
     return that;
   };
@@ -76,7 +76,7 @@
   var MILLIS_PER_SECOND = 1000;
   var MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
   $.extend({
-    parseClockFormat: function(clockFormat) {
+    clockFormatToSolveTime: function(clockFormat) {
       if(clockFormat.toUpperCase() === 'DNF') {
         return {
           penalties: 'DNF',
@@ -106,7 +106,7 @@
         decimals: decimals,
       };
     },
-    toClockFormat: function(solveTime) {
+    solveTimeToClockFormat: function(solveTime) {
       if(solveTime.penalties && solveTime.penalties.indexOf('DNF') >= 0) {
         return "DNF";
       }

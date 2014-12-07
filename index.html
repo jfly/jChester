@@ -10,10 +10,7 @@
     <script>
       $(function() {
         var $inputTime = $("div.jChester").jChester({
-          solveTime: {
-            millis: 4242,
-            decimals: 3,
-          }
+          solveTime: $.clockFormatToSolveTime("4.242")
         });
         $inputTime.on("solveTimeInput", function(e, solveTime) {
           console.log(solveTime);
@@ -51,10 +48,7 @@
       <pre>&lt;script&gt;
   $(function() {
     var $inputTime = $(&quot;div.jChester&quot;).jChester({
-      solveTime: {
-        millis: 4242,
-        decimals: 3,
-      }
+      solveTime: $.clockFormatToSolveTime(&quot;4.242&quot;)
     });
     $inputTime.on(&quot;solveTimeInput&quot;, function(e, solveTime) {
       console.log(solveTime);
@@ -88,6 +82,22 @@
             <td><code>$('div').jChester('getSolveTime')</code></td>
             <td>
               Returns the current SolveTime, which may be null.
+            </td>
+          </tr>
+          <tr>
+            <td><code>$.clockFormatToSolveTime(String)</code></td>
+            <td>
+              Converts a clock formatted string to a SolveTime.
+              For example:<br>
+              <code>$.clockFormatToSolveTime("42.23") = { millis: 42230, decimals: 2 };</code>
+            </td>
+          </tr>
+          <tr>
+            <td><code>$.solveTimeToClockFormat(SolveTime)</code></td>
+            <td>
+              Converts a SolveTime to a pretty clock formatted string.
+              For example:<br>
+              <code>$.solveTimeToClockFormat({ millis: 42230, decimals: 2 }) = "42.23"</code>
             </td>
           </tr>
         </tbody>
