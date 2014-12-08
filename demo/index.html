@@ -11,7 +11,13 @@
     <script>
       $(function() {
         var $inputTime = $("div.jChester").jChester({
-          solveTime: $.stopwatchFormatToSolveTime("1:4.242")
+          solveTime: $.stopwatchFormatToSolveTime("1:4.242"),
+          editableSolveTimeFields: {
+            millis: true,
+            puzzlesSolved: true,
+            puzzlesAttempted: true,
+            moveCount: true,
+          }
         });
         $inputTime.on("solveTimeInput", function(e, solveTime) {
           console.log(solveTime);
@@ -96,15 +102,35 @@
                     <td><code>solveTime</code></td>
                     <td>SolveTime to set the jChester to. If null, clears the jChester.</td>
                   </tr>
+                  <tr>
+                    <td><code>editableSolveTimeFields</code></td>
+                    <td>
+                      An object whose keys are fields from SolveTime
+                      to make editable via this jChester.
+                      Valid fields are currently
+                      <code>millis</code>,
+                      <code>puzzlesSolved</code>,
+                      <code>puzzlesAttempted</code>, and
+                      <code>moveCount</code>.
+                      <br>
+                      editableSolveTimeFields defaults to
+                      <code>{ millis: true }</code>.
+                    </td>
+                  </tr>
                 </tbody>
               </table>
-              The jChester's time will be set to options.solveTime, if given.
             </td>
           </tr>
           <tr>
             <td><code>$('div').jChester('getSolveTime')</code></td>
             <td>
               Returns the current SolveTime, which may be null.
+            </td>
+          </tr>
+          <tr>
+            <td><code>$('div').jChester('setSolveTime', SolveTime)</code></td>
+            <td>
+              Set the current SolveTime, may be null.
             </td>
           </tr>
           <tr>
