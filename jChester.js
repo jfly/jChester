@@ -1,5 +1,5 @@
 /*
- *  jChester - v0.4.2
+ *  jChester - v0.4.3
  *  A time entry component for speedcubing solves.
  *  https://github.com/jfly/jChester
  *
@@ -141,6 +141,11 @@
           data.inputChanged();
           that.trigger("solveTimeChange", [data.solveTime]);
         }
+      });
+
+      this.attr("tabindex", "-1");
+      this.focus(function(e) {
+        $(this).find('input').first().focus();
       });
     }
 
