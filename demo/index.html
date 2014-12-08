@@ -14,8 +14,8 @@
           solveTime: $.stopwatchFormatToSolveTime("1:4.242"),
           editableSolveTimeFields: {
             millis: true,
-            puzzlesSolved: true,
-            puzzlesAttempted: true,
+            puzzlesSolvedCount: true,
+            puzzlesAttemptedCount: true,
             moveCount: true,
           }
         });
@@ -46,8 +46,8 @@
   millis: Integer,           // The number of milliseconds (after any penalties have been applied).
   decimals: Integer,         // The number of decimal places of accuracy in millis, when treated a number of seconds in base 10.
   penalties: [ String ],     // An array of penalties applied to the solve. No penalties are currently defined, but may be in the future.
-  puzzlesSolved: Integer,    // The number of puzzles solved in this SolveTime. If puzzlesSolved is 0, this SolveTime is a DNF (see also <a href="https://www.worldcubeassociation.org/regulations/#9f12c">multiple blindfolded rules</a>). If not set, puzzlesSolved should be treated as 1.
-  puzzlesAttempted: Integer, // The number of puzzles attempted in this SolveTime. Must be >= puzzlesSolved. If puzzlesAttempted is 0, this SolveTime is a DNS. If not set, puzzlesAttempted should be treated as 1.
+  puzzlesSolvedCount: Integer,    // The number of puzzles solved in this SolveTime. If puzzlesSolvedCount is 0, this SolveTime is a DNF (see also <a href="https://www.worldcubeassociation.org/regulations/#9f12c">multiple blindfolded rules</a>). If not set, puzzlesSolvedCount should be treated as 1.
+  puzzlesAttemptedCount: Integer, // The number of puzzles attempted in this SolveTime. Must be >= puzzlesSolvedCount. If puzzlesAttemptedCount is 0, this SolveTime is a DNS. If not set, puzzlesAttemptedCount should be treated as 1.
   moveCount: Integer,        // An integer number of moves. Used for <a href="https://www.worldcubeassociation.org/regulations/#article-E-fewest-moves">FMC</a>.
 }</pre>
       </p>
@@ -109,8 +109,8 @@
                       to make editable via this jChester.
                       Valid fields are currently
                       <code>millis</code>,
-                      <code>puzzlesSolved</code>,
-                      <code>puzzlesAttempted</code>, and
+                      <code>puzzlesSolvedCount</code>,
+                      <code>puzzlesAttemptedCount</code>, and
                       <code>moveCount</code>.
                       <br>
                       editableSolveTimeFields defaults to

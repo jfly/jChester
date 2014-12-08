@@ -19,7 +19,7 @@
       method = null;
     }
 
-    var editableSolveTimeFieldOptions = [ 'millis', 'moveCount', 'puzzlesSolved', 'puzzlesAttempted' ];
+    var editableSolveTimeFieldOptions = [ 'millis', 'moveCount', 'puzzlesSolvedCount', 'puzzlesAttemptedCount' ];
 
     var that = this;
     var settings = $.extend({}, $.fn.jChester.defaults, _settings);
@@ -40,13 +40,13 @@
 
       data.$form.append(document.createTextNode(' '));
 
-      // Create puzzlesSolved field
-      data.$form.append($('<div class="form-group"><input name="puzzlesSolved" min="0" type="number" class="form-control"></input></div>'));
+      // Create puzzlesSolvedCount field
+      data.$form.append($('<div class="form-group"><input name="puzzlesSolvedCount" min="0" type="number" class="form-control"></input></div>'));
 
       data.$form.append(document.createTextNode(' / '));
 
-      // Create puzzlesAttempted field
-      data.$form.append($('<div class="form-group"><input name="puzzlesAttempted" min="0" type="number" class="form-control"></input></div>'));
+      // Create puzzlesAttemptedCount field
+      data.$form.append($('<div class="form-group"><input name="puzzlesAttemptedCount" min="0" type="number" class="form-control"></input></div>'));
 
       data.$form.append($('<span class="help-block">'));
 
@@ -81,23 +81,23 @@
           errorByField.moveCount = 'Invalid move count';
         }
 
-        var puzzlesSolvedStr = data.$form.find('input[name="puzzlesSolved"]').val();
-        if(isInt(puzzlesSolvedStr)) {
-          var puzzlesSolved = parseInt(puzzlesSolvedStr);
-          solveTime.puzzlesSolved = puzzlesSolved;
+        var puzzlesSolvedCountStr = data.$form.find('input[name="puzzlesSolvedCount"]').val();
+        if(isInt(puzzlesSolvedCountStr)) {
+          var puzzlesSolvedCount = parseInt(puzzlesSolvedCountStr);
+          solveTime.puzzlesSolvedCount = puzzlesSolvedCount;
         } else {
-          errorByField.puzzlesSolved = 'Invalid number of puzzles solved';
+          errorByField.puzzlesSolvedCount = 'Invalid number of puzzles solved';
         }
 
-        var puzzlesAttemptedStr = data.$form.find('input[name="puzzlesAttempted"]').val();
-        if(isInt(puzzlesAttemptedStr)) {
-          var puzzlesAttempted = parseInt(puzzlesAttemptedStr);
-          solveTime.puzzlesAttempted = puzzlesAttempted;
-          if(!errorByField.puzzlesSolved && solveTime.puzzlesSolved > solveTime.puzzlesAttempted) {
-            errorByField.puzzlesAttempted = 'Cannot have more puzzles solved than attemped';
+        var puzzlesAttemptedCountStr = data.$form.find('input[name="puzzlesAttemptedCount"]').val();
+        if(isInt(puzzlesAttemptedCountStr)) {
+          var puzzlesAttemptedCount = parseInt(puzzlesAttemptedCountStr);
+          solveTime.puzzlesAttemptedCount = puzzlesAttemptedCount;
+          if(!errorByField.puzzlesSolvedCount && solveTime.puzzlesSolvedCount > solveTime.puzzlesAttemptedCount) {
+            errorByField.puzzlesAttemptedCount = 'Cannot have more puzzles solved than attemped';
           }
         } else {
-          errorByField.puzzlesAttempted = 'Invalid number of puzzles attempted';
+          errorByField.puzzlesAttemptedCount = 'Invalid number of puzzles attempted';
         }
 
         var getErrorForField = function(field) {
@@ -142,14 +142,14 @@
         // the current input and validation state.
         data.$form.find('input[name="millis"]').val('');
         data.$form.find('input[name="moveCount"]').val('');
-        data.$form.find('input[name="puzzlesSolved"]').val('');
-        data.$form.find('input[name="puzzlesAttempted"]').val('');
+        data.$form.find('input[name="puzzlesSolvedCount"]').val('');
+        data.$form.find('input[name="puzzlesAttemptedCount"]').val('');
         data.inputChanged();
       } else if(solveTime) {
         data.$form.find('input[name="millis"]').val($.solveTimeToStopwatchFormat(solveTime));
         data.$form.find('input[name="moveCount"]').val(solveTime.moveCount);
-        data.$form.find('input[name="puzzlesSolved"]').val(solveTime.puzzlesSolved);
-        data.$form.find('input[name="puzzlesAttempted"]').val(solveTime.puzzlesAttempted);
+        data.$form.find('input[name="puzzlesSolvedCount"]').val(solveTime.puzzlesSolvedCount);
+        data.$form.find('input[name="puzzlesAttemptedCount"]').val(solveTime.puzzlesAttemptedCount);
         data.inputChanged();
       }
     };
@@ -186,14 +186,14 @@
     stopwatchFormatToSolveTime: function(stopwatchFormat) {
       if(stopwatchFormat.toUpperCase() === 'DNF') {
         return {
-          puzzlesSolved: 0,
-          puzzlesAttempted: 1,
+          puzzlesSolvedCount: 0,
+          puzzlesAttemptedCount: 1,
         };
       }
       if(stopwatchFormat.toUpperCase() === 'DNS') {
         return {
-          puzzlesSolved: 0,
-          puzzlesAttempted: 0,
+          puzzlesSolvedCount: 0,
+          puzzlesAttemptedCount: 0,
         };
       }
       var m = stopwatchFormat.match(/^(?:(\d*):)?(\d+)(?:[.,](\d*))?$/);
@@ -216,13 +216,13 @@
       };
     },
     solveTimeIsDNF: function(solveTime) {
-      if(typeof solveTime.puzzlesSolved !== 'undefined' && typeof solveTime.puzzlesAttempted !== 'undefined') {
-        if(solveTime.puzzlesAttempted === 1) {
+      if(typeof solveTime.puzzlesSolvedCount !== 'undefined' && typeof solveTime.puzzlesAttemptedCount !== 'undefined') {
+        if(solveTime.puzzlesAttemptedCount === 1) {
           // This is *not* a multi attempt.
-          if(solveTime.puzzlesSolved === 0) {
+          if(solveTime.puzzlesSolvedCount === 0) {
             return true;
           }
-        } else if(solveTime.puzzlesAttempted > 1) {
+        } else if(solveTime.puzzlesAttemptedCount > 1) {
           // By https://www.worldcubeassociation.org/regulations/#H1a,
           // multibld results must have at least 2 puzzles attempted.
           /* From https://www.worldcubeassociation.org/regulations/#9f12c
@@ -238,9 +238,9 @@
           the competitors failed to solve, where fewer unsolved
           puzzles is better.
           */
-          var puzzleUnsolved = solveTime.puzzlesAttempted - solveTime.puzzlesSolved;
-          var solvedMinusUnsolved = solveTime.puzzlesSolved - puzzleUnsolved;
-          if(solvedMinusUnsolved < 0 || solveTime.puzzlesSolved === 1) {
+          var puzzleUnsolved = solveTime.puzzlesAttemptedCount - solveTime.puzzlesSolvedCount;
+          var solvedMinusUnsolved = solveTime.puzzlesSolvedCount - puzzleUnsolved;
+          if(solvedMinusUnsolved < 0 || solveTime.puzzlesSolvedCount === 1) {
             return true;
           }
         }
@@ -248,8 +248,8 @@
       return false;
     },
     solveTimeIsDNS: function(solveTime) {
-      if(typeof solveTime.puzzlesAttempted !== 'undefined') {
-        if(solveTime.puzzlesAttempted === 0) {
+      if(typeof solveTime.puzzlesAttemptedCount !== 'undefined') {
+        if(solveTime.puzzlesAttemptedCount === 0) {
           return true;
         }
       }
