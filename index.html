@@ -162,7 +162,13 @@
               var $checkbox = $('#editableSolveTimeFields input[name="' + field + '"]');
               $checkbox.prop('checked', !!JCHESTER_OPTIONS.editableSolveTimeFields[field]);
             });
+
+            // This is a little silly that refreshDemo doesn't handle removing
+            // old listeners for us, but refreshDemo is used for rendering the
+            // demo source code, so we can't change it.
+            $("div.jChester").off("solveTimeInput").off("solveTimeChange");
             refreshDemo();
+
             refreshDemoSource();
           }
 
