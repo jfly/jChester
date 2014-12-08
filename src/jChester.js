@@ -134,6 +134,11 @@
           that.trigger("solveTimeChange", [data.solveTime]);
         }
       });
+
+      this.attr("tabindex", "-1");
+      this.focus(function(e) {
+        $(this).find('input').first().focus();
+      });
     }
 
     var setSolveTime = function(solveTime) {
