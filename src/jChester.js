@@ -101,6 +101,9 @@
         }
 
         var getErrorForField = function(field) {
+          if(!data.editableSolveTimeFields[field]) {
+            return null;
+          }
           return errorByField[field];
         };
         var errors = editableSolveTimeFieldOptions.filter(getErrorForField).map(getErrorForField);
@@ -133,7 +136,6 @@
           that.trigger("solveTimeChange", [data.solveTime]);
         }
       });
-
     }
 
     var setSolveTime = function(solveTime) {
@@ -164,8 +166,9 @@
       throw "Unrecognized method: " + method;
     }
 
+    data.editableSolveTimeFields = settings.editableSolveTimeFields;
     editableSolveTimeFieldOptions.forEach(function(field) {
-      var fieldVisible = !!settings.editableSolveTimeFields[field];
+      var fieldVisible = !!data.editableSolveTimeFields[field];
       data.$form.find('input[name="' + field + '"]').toggle(fieldVisible);
     });
 
