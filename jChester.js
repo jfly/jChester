@@ -8,11 +8,26 @@
  */
 (function($) {
 
+  var INPUT_WIDTH_PIXELS = 75;
+  var INTEGER_INPUT_WIDTH_PIXELS = 45; // Enough for 3 digits, which is *plenty*
+
+  function isInt(n) {
+    if(n.length === 0) {
+      return false;
+    }
+    return (+n % 1) === 0;
+  }
+
   $.fn.jChester = function(method, _settings) {
+    if(!this.is('div')) {
+      throw "jChester can only be applied to divs";
+    }
     if($.isPlainObject(method)) {
       _settings = method;
       method = null;
     }
+
+    var editableSolveTimeFieldOptions = [ 'millis', 'moveCount', 'puzzlesSolved', 'puzzlesAttempted' ];
 
     var that = this;
     var settings = $.extend({}, $.fn.jChester.defaults, _settings);
@@ -22,55 +37,155 @@
       data = {};
       this.data('datepicker', data);
 
-      data.$formGroup = $('<div class="form-group">');
-      that.append(data.$formGroup);
+      data.$form = $('<form class="form-inline" role="form">');
+      that.append(data.$form);
 
-      data.$input = $('<input class="form-control">');
-      data.$formGroup.append(data.$input);
+      // Create millis field
+      data.$form.append($('<div class="form-group"><input name="millis" type="text" class="form-control"></input></div>'));
 
-      data.$helpBlock = $('<span class="help-block">');
-      data.$formGroup.append(data.$helpBlock);
+      // Create moveCount field
+      data.$form.append($('<div class="form-group"><input name="moveCount" min="0" type="number" class="form-control"></input></div>'));
 
-      var updateSolveTime = function() {
-        var val = data.$input.val();
+      data.$form.append(document.createTextNode(' '));
+
+      // Create puzzlesSolved field
+      data.$form.append($('<div class="form-group"><input name="puzzlesSolved" min="0" type="number" class="form-control"></input></div>'));
+
+      data.$form.append(document.createTextNode(' / '));
+
+      // Create puzzlesAttempted field
+      data.$form.append($('<div class="form-group"><input name="puzzlesAttempted" min="0" type="number" class="form-control"></input></div>'));
+
+      data.$form.append($('<span class="help-block">'));
+
+      data.$form.find('input[type="text"]').width(INPUT_WIDTH_PIXELS);
+      data.$form.find('input[type="number"]').width(INTEGER_INPUT_WIDTH_PIXELS);
+
+      // Force form to be on one line. Bootstrap's .form-inline only applies
+      // when the viewport is at least 768px wide.
+      data.$form.find('.form-group').css({ display: 'inline-block' });
+
+      data.inputChanged = function() {
+        var errorByField = {};
+        var solveTime;
+
+        var millisStr = data.$form.find('input[name="millis"]').val();
         try {
-          var solveTime = $.stopwatchFormatToSolveTime(val);
-          data.solveTime = solveTime;
-          data.$helpBlock.text('');
-          data.$formGroup.removeClass('has-warning');
+          solveTime = $.stopwatchFormatToSolveTime(millisStr);
         } catch(e) {
-          data.solveTime = null;
-          data.$helpBlock.text(e);
-          data.$formGroup.addClass('has-warning');
+          solveTime = {};
+          if(millisStr.length === 0) {
+            errorByField.millis = "Please enter a time";
+          } else {
+            errorByField.millis = e;
+          }
         }
+
+        var moveCountStr = data.$form.find('input[name="moveCount"]').val();
+        if(isInt(moveCountStr)) {
+          var moveCount = parseInt(moveCountStr);
+          solveTime.moveCount = moveCount;
+        } else {
+          errorByField.moveCount = 'Invalid move count';
+        }
+
+        var puzzlesSolvedStr = data.$form.find('input[name="puzzlesSolved"]').val();
+        if(isInt(puzzlesSolvedStr)) {
+          var puzzlesSolved = parseInt(puzzlesSolvedStr);
+          solveTime.puzzlesSolved = puzzlesSolved;
+        } else {
+          errorByField.puzzlesSolved = 'Invalid number of puzzles solved';
+        }
+
+        var puzzlesAttemptedStr = data.$form.find('input[name="puzzlesAttempted"]').val();
+        if(isInt(puzzlesAttemptedStr)) {
+          var puzzlesAttempted = parseInt(puzzlesAttemptedStr);
+          solveTime.puzzlesAttempted = puzzlesAttempted;
+          if(!errorByField.puzzlesSolved && solveTime.puzzlesSolved > solveTime.puzzlesAttempted) {
+            errorByField.puzzlesAttempted = 'Cannot have more puzzles solved than attemped';
+          }
+        } else {
+          errorByField.puzzlesAttempted = 'Invalid number of puzzles attempted';
+        }
+
+        var getErrorForField = function(field) {
+          return errorByField[field];
+        };
+        var errors = editableSolveTimeFieldOptions.filter(getErrorForField).map(getErrorForField);
+
+        if(errors.length > 0) {
+          solveTime = null;
+        }
+        data.solveTime = solveTime;
+
+        // TODO - it would be nice if the errors lined up with the appropriate
+        // inputs somehow. Perhaps we could have tooltips/popovers on each field?
+        data.$form.find('.help-block').text(errors.join(". "));
+        data.$form.find('.input-group').removeClass('has-error');
+        editableSolveTimeFieldOptions.forEach(function(field) {
+          var $inputForField = data.$form.find('input[name="' + field + '"]');
+          var $formGroupForField = $inputForField.parent('.form-group');
+          var hasError = !!errorByField[field];
+          $formGroupForField.toggleClass('has-error', hasError);
+        });
       };
 
-      data.$input.on("input", function() {
-        updateSolveTime();
+      data.$form.find("input").on("input", function() {
+        data.inputChanged();
         that.trigger("solveTimeInput", [data.solveTime]);
       });
 
-      data.$input.on('keydown', function(e) {
+      data.$form.find("input").on('keydown', function(e) {
         if(e.which === 13) {
-          updateSolveTime();
+          data.inputChanged();
           that.trigger("solveTimeChange", [data.solveTime]);
         }
       });
 
     }
 
+    var setSolveTime = function(solveTime) {
+      if(solveTime === null) {
+        // If solveTime is explicitly set to null, clear
+        // the current input and validation state.
+        data.$form.find('input[name="millis"]').val('');
+        data.$form.find('input[name="moveCount"]').val('');
+        data.$form.find('input[name="puzzlesSolved"]').val('');
+        data.$form.find('input[name="puzzlesAttempted"]').val('');
+        data.inputChanged();
+      } else if(solveTime) {
+        data.$form.find('input[name="millis"]').val($.solveTimeToStopwatchFormat(solveTime));
+        data.$form.find('input[name="moveCount"]').val(solveTime.moveCount);
+        data.$form.find('input[name="puzzlesSolved"]').val(solveTime.puzzlesSolved);
+        data.$form.find('input[name="puzzlesAttempted"]').val(solveTime.puzzlesAttempted);
+        data.inputChanged();
+      }
+    };
+
     if(method === 'getSolveTime') {
       return data.solveTime;
+    } else if(method === 'setSolveTime') {
+      var solveTime = arguments[1];
+      setSolveTime(solveTime);
+      return;
+    } else if(method) {
+      throw "Unrecognized method: " + method;
     }
 
-    if(settings.solveTime) {
-      data.$input.val($.solveTimeToStopwatchFormat(settings.solveTime));
-    }
+    editableSolveTimeFieldOptions.forEach(function(field) {
+      var fieldVisible = !!settings.editableSolveTimeFields[field];
+      data.$form.find('input[name="' + field + '"]').toggle(fieldVisible);
+    });
+
+    setSolveTime(settings.solveTime);
     return that;
   };
 
   $.fn.jChester.defaults = {
     solveTime: null,
+    editableSolveTimeFields: {
+      millis: true,
+    }
   };
 
   var MILLIS_PER_SECOND = 1000;
@@ -79,12 +194,14 @@
     stopwatchFormatToSolveTime: function(stopwatchFormat) {
       if(stopwatchFormat.toUpperCase() === 'DNF') {
         return {
-          penalties: 'DNF',
+          puzzlesSolved: 0,
+          puzzlesAttempted: 1,
         };
       }
       if(stopwatchFormat.toUpperCase() === 'DNS') {
         return {
-          penalties: 'DNS',
+          puzzlesSolved: 0,
+          puzzlesAttempted: 0,
         };
       }
       var m = stopwatchFormat.match(/^(?:(\d*):)?(\d+)(?:[.,](\d*))?$/);
@@ -106,13 +223,53 @@
         decimals: decimals,
       };
     },
-    solveTimeToStopwatchFormat: function(solveTime) {
-      if(solveTime.penalties && solveTime.penalties.indexOf('DNF') >= 0) {
-        return "DNF";
+    solveTimeIsDNF: function(solveTime) {
+      if(typeof solveTime.puzzlesSolved !== 'undefined' && typeof solveTime.puzzlesAttempted !== 'undefined') {
+        if(solveTime.puzzlesAttempted === 1) {
+          // This is *not* a multi attempt.
+          if(solveTime.puzzlesSolved === 0) {
+            return true;
+          }
+        } else if(solveTime.puzzlesAttempted > 1) {
+          // By https://www.worldcubeassociation.org/regulations/#H1a,
+          // multibld results must have at least 2 puzzles attempted.
+          /* From https://www.worldcubeassociation.org/regulations/#9f12c
+          9f12c) For Multiple Blindfolded Solving, rankings are
+          assessed based on number of puzzles solved minus the number
+          of puzzles not solved, where a greater difference is better.
+          If the difference is less than 0, or if only 1 puzzle is
+          solved, the attempt is considered unsolved (DNF). If
+          competitors achieve the same result, rankings are assessed
+          based on total time, where the shorter recorded time is
+          better. If competitors achieve the same result and the same
+          time, rankings are assessed based on the number of puzzles
+          the competitors failed to solve, where fewer unsolved
+          puzzles is better.
+          */
+          var puzzleUnsolved = solveTime.puzzlesAttempted - solveTime.puzzlesSolved;
+          var solvedMinusUnsolved = solveTime.puzzlesSolved - puzzleUnsolved;
+          if(solvedMinusUnsolved < 0 || solveTime.puzzlesSolved === 1) {
+            return true;
+          }
+        }
       }
-      if(solveTime.penalties && solveTime.penalties.indexOf('DNS') >= 0) {
+      return false;
+    },
+    solveTimeIsDNS: function(solveTime) {
+      if(typeof solveTime.puzzlesAttempted !== 'undefined') {
+        if(solveTime.puzzlesAttempted === 0) {
+          return true;
+        }
+      }
+      return false;
+    },
+    solveTimeToStopwatchFormat: function(solveTime) {
+      if($.solveTimeIsDNF(solveTime)) {
+        return "DNF";
+      } else if($.solveTimeIsDNS(solveTime)) {
         return "DNS";
       }
+
       var millis = solveTime.millis;
       var minutesField = Math.floor(millis / (60*1000));
       millis %= (60*1000);

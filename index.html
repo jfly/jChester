@@ -11,7 +11,13 @@
     <script>
       $(function() {
         var $inputTime = $("div.jChester").jChester({
-          solveTime: $.stopwatchFormatToSolveTime("1:4.242")
+          solveTime: $.stopwatchFormatToSolveTime("1:4.242"),
+          editableSolveTimeFields: {
+            millis: true,
+            puzzlesSolved: true,
+            puzzlesAttempted: true,
+            moveCount: true,
+          }
         });
         $inputTime.on("solveTimeInput", function(e, solveTime) {
           console.log(solveTime);
@@ -37,9 +43,12 @@
       <p>
         jChester deals with SolveTimes, which have the following format:
         <pre>{
-  millis: Integer,      // The number of milliseconds (after any penalties have been applied).
-  decimals: Integer,    // The number of decimal places of accuracy in millis, when treated a number of seconds in base 10.
-  penalties: [ String ] // An array of penalties applied to the solve. Currently supports "DNF" and "DNS", which are mutually exclusive.
+  millis: Integer,           // The number of milliseconds (after any penalties have been applied).
+  decimals: Integer,         // The number of decimal places of accuracy in millis, when treated a number of seconds in base 10.
+  penalties: [ String ],     // An array of penalties applied to the solve. No penalties are currently defined, but may be in the future.
+  puzzlesSolved: Integer,    // The number of puzzles solved in this SolveTime. If puzzlesSolved is 0, this SolveTime is a DNF (see also <a href="https://www.worldcubeassociation.org/regulations/#9f12c">multiple blindfolded rules</a>). If not set, puzzlesSolved should be treated as 1.
+  puzzlesAttempted: Integer, // The number of puzzles attempted in this SolveTime. Must be >= puzzlesSolved. If puzzlesAttempted is 0, this SolveTime is a DNS. If not set, puzzlesAttempted should be treated as 1.
+  moveCount: Integer,        // An integer number of moves. Used for <a href="https://www.worldcubeassociation.org/regulations/#article-E-fewest-moves">FMC</a>.
 }</pre>
       </p>
 
@@ -80,13 +89,48 @@
             <td>
               Initialize jChester on a jQuery compenent (must be a div!) if
               jChester is not already initialized on it.
-              The jChester's time will be set to options.solveTime, if given.
+
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Option</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>solveTime</code></td>
+                    <td>SolveTime to set the jChester to. If null, clears the jChester.</td>
+                  </tr>
+                  <tr>
+                    <td><code>editableSolveTimeFields</code></td>
+                    <td>
+                      An object whose keys are fields from SolveTime
+                      to make editable via this jChester.
+                      Valid fields are currently
+                      <code>millis</code>,
+                      <code>puzzlesSolved</code>,
+                      <code>puzzlesAttempted</code>, and
+                      <code>moveCount</code>.
+                      <br>
+                      editableSolveTimeFields defaults to
+                      <code>{ millis: true }</code>.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </td>
           </tr>
           <tr>
             <td><code>$('div').jChester('getSolveTime')</code></td>
             <td>
               Returns the current SolveTime, which may be null.
+            </td>
+          </tr>
+          <tr>
+            <td><code>$('div').jChester('setSolveTime', SolveTime)</code></td>
+            <td>
+              Set the current SolveTime, may be null.
             </td>
           </tr>
           <tr>
