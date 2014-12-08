@@ -6,28 +6,29 @@
     <script src="jChester.js"></script>
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
     @@extraHead
-  </head>
-  <body>
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
     <script>
-      $(function() {
-        var $inputTime = $("div.jChester").jChester({
-          solveTime: $.stopwatchFormatToSolveTime("1:4.242"),
-          editableSolveTimeFields: {
-            millis: true,
-            puzzlesSolvedCount: true,
-            puzzlesAttemptedCount: true,
-            moveCount: true,
-          }
-        });
-        $inputTime.on("solveTimeInput", function(e, solveTime) {
-          console.log(solveTime);
-        });
-        $inputTime.on("solveTimeChange", function(e, solveTime) {
-          console.log(solveTime);
+      $(document).ready(function() {
+        $('code[class]').each(function(i, block) {
+          hljs.highlightBlock(block);
         });
       });
     </script>
 
+    <style>
+      a .hljs-comment {
+        color: blue;
+      }
+
+      .xml .javascript {
+        opacity: 1;
+      }
+    </style>
+
+  </head>
+  <body>
     <a href="https://github.com/jfly/jChester/"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/82b228a3648bf44fc1163ef44c62fcc60081495e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png"></a>
 
     <div class="container">
@@ -42,38 +43,142 @@
 
       <p>
         jChester deals with SolveTimes, which have the following format:
-        <pre>{
-  millis: Integer,           // The number of milliseconds (after any penalties have been applied).
-  decimals: Integer,         // The number of decimal places of accuracy in millis, when treated a number of seconds in base 10.
-  penalties: [ String ],     // An array of penalties applied to the solve. No penalties are currently defined, but may be in the future.
+        <pre><code class="javascript">{
+  millis: Integer,                // The number of milliseconds (after any penalties have been applied).
+  decimals: Integer,              // The number of decimal places of accuracy in millis, when treated a number of seconds in base 10.
+  moveCount: Integer,             // An integer number of moves. Used for <a href="https://www.worldcubeassociation.org/regulations/#article-E-fewest-moves">FMC</a>.
+  penalties: [ String ],          // An array of penalties applied to the solve. No penalties are currently defined, but may be in the future.
   puzzlesSolvedCount: Integer,    // The number of puzzles solved in this SolveTime. If puzzlesSolvedCount is 0, this SolveTime is a DNF (see also <a href="https://www.worldcubeassociation.org/regulations/#9f12c">multiple blindfolded rules</a>). If not set, puzzlesSolvedCount should be treated as 1.
   puzzlesAttemptedCount: Integer, // The number of puzzles attempted in this SolveTime. Must be >= puzzlesSolvedCount. If puzzlesAttemptedCount is 0, this SolveTime is a DNS. If not set, puzzlesAttemptedCount should be treated as 1.
-  moveCount: Integer,        // An integer number of moves. Used for <a href="https://www.worldcubeassociation.org/regulations/#article-E-fewest-moves">FMC</a>.
-}</pre>
+}</code></pre>
       </p>
 
       <h4>Demo</h4>
-      <div class="jChester"></div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">Choose <code>editableSolveTimeFields</code></div>
+        <div class="panel-body">
+          <div id="editableSolveTimeFields">
+            <label class="checkbox-inline">
+              <input type="checkbox" name="millis"> millis
+            </label>
+            <label class="checkbox-inline">
+              <input type="checkbox" name="moveCount"> moveCount
+            </label>
+            <label class="checkbox-inline">
+              <input type="checkbox" name="puzzlesSolvedCount"> puzzlesSolvedCount
+            </label>
+            <label class="checkbox-inline">
+              <input type="checkbox" name="puzzlesAttemptedCount"> puzzlesAttemptedCount
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="well well-lg">
+        <div class="jChester"></div>
+      </div>
+
       <h5>Source</h5>
-      <pre>&lt;script src=&quot;http://www.jflei.com/jChester/jChester.js&quot;&gt;&lt;/script&gt;
+      <pre><code class="html">&lt;script src=&quot;http://www.jflei.com/jChester/jChester.js&quot;&gt;&lt;/script&gt;
 &lt;!-- OR, if you want a minified version: --&gt;
 &lt;script src=&quot;http://www.jflei.com/jChester/jChester.min.js&quot;&gt;&lt;/script&gt;
 
-&lt;script&gt;
-  $(function() {
-    var $inputTime = $(&quot;div.jChester&quot;).jChester({
-      solveTime: $.stopwatchFormatToSolveTime(&quot;1:4.242&quot;)
-    });
-    $inputTime.on(&quot;solveTimeInput&quot;, function(e, solveTime) {
-      console.log(solveTime);
-    });
-    $inputTime.on(&quot;solveTimeChange&quot;, function(e, solveTime) {
-      console.log(solveTime);
-    });
-  });
-&lt;/script&gt;
+&lt;script&gt;<span id="demoSource" class="javascript"></span>&lt;/script&gt;
 
-&lt;div class=&quot;jChester&quot;&gt;</pre>
+&lt;div class=&quot;jChester&quot;&gt;&lt;/div&gt;</code></pre>
+      <script>
+        $(function() {
+          function getFunctionSource(f) {
+            // Note that we make some assumptions about the formatting of the
+            // function's source code in the interest of simplicity.
+            var src = "";
+            var lines = f.toString().split("\n");
+            for(var i = 1; i < lines.length - 1; i++) {
+              if(lines.length === 0) {
+                continue;
+              }
+              src += lines[i] + "\n";
+            }
+            // Find index of first non whitespace character in the first line of code.
+            var deIndentation = /\S/.exec(lines[1]).index;
+            src = indent(src, -deIndentation);
+            return src;
+          }
+          function indent(str, level) {
+            var indented = "";
+            var lines = str.split("\n");
+            for(var i = 0; i < lines.length; i++) {
+              var line = lines[i];
+              if(line.length === 0) {
+                continue;
+              }
+              if(level < 0) {
+                line = line.substring(-level);
+              } else {
+                for(var j = 0; j < level; j++) {
+                  line = " " + line;
+                }
+              }
+              indented += line + "\n";
+            }
+            return indented;
+          }
+
+          var JCHESTER_OPTIONS = {
+            solveTime: $.stopwatchFormatToSolveTime("1:4.242"),
+            editableSolveTimeFields: {
+              millis: true,
+              puzzlesSolvedCount: true,
+              puzzlesAttemptedCount: true,
+            }
+          };
+          function refreshDemo() {
+            $(function() {
+              var $inputTime = $("div.jChester").jChester(JCHESTER_OPTIONS);
+              $inputTime.on("solveTimeInput", function(e, solveTime) {
+                console.log(solveTime);
+              });
+              $inputTime.on("solveTimeChange", function(e, solveTime) {
+                console.log(solveTime);
+              });
+            });
+          }
+
+          function refreshDemoSource() {
+            var $demoSource = $('#demoSource');
+            var sourceCode = getFunctionSource(refreshDemo);
+            var prettyOptions = indent(JSON.stringify(JCHESTER_OPTIONS, null, 2), 2).trim();
+            sourceCode = sourceCode.replace("JCHESTER_OPTIONS", prettyOptions);
+            sourceCode = indent(sourceCode, 2);
+            $demoSource.text(sourceCode);
+            hljs.highlightBlock($demoSource[0]);
+          }
+
+          function refreshView() {
+            // "view" as in MVC
+            var editableSolveTimeFieldOptions = [ 'millis', 'moveCount', 'puzzlesSolvedCount', 'puzzlesAttemptedCount' ];
+            editableSolveTimeFieldOptions.forEach(function(field) {
+              var $checkbox = $('#editableSolveTimeFields input[name="' + field + '"]');
+              $checkbox.prop('checked', !!JCHESTER_OPTIONS.editableSolveTimeFields[field]);
+            });
+            refreshDemo();
+            refreshDemoSource();
+          }
+
+          $('#editableSolveTimeFields input').on('change', function(e) {
+            var field = this.name;
+            if(this.checked) {
+              JCHESTER_OPTIONS.editableSolveTimeFields[field] = true;
+            } else {
+              delete JCHESTER_OPTIONS.editableSolveTimeFields[field];
+            }
+            refreshView();
+          });
+
+          refreshView();
+        });
+      </script>
 
       <h4>Methods</h4>
       <table class="table">
@@ -85,7 +190,7 @@
         </thead>
         <tbody>
           <tr>
-            <td><code>$('div').jChester(options)</code></td>
+            <td><code class="javascript">$('div').jChester(options)</code></td>
             <td>
               Initialize jChester on a jQuery compenent (must be a div!) if
               jChester is not already initialized on it.
@@ -109,12 +214,12 @@
                       to make editable via this jChester.
                       Valid fields are currently
                       <code>millis</code>,
-                      <code>puzzlesSolvedCount</code>,
-                      <code>puzzlesAttemptedCount</code>, and
-                      <code>moveCount</code>.
+                      <code>moveCount</code>,
+                      <code>puzzlesSolvedCount</code>, and
+                      <code>puzzlesAttemptedCount</code>.
                       <br>
-                      editableSolveTimeFields defaults to
-                      <code>{ millis: true }</code>.
+                      editableSolveTimeFields defaults to:
+                      <code class="javascript">{ millis: true }</code>
                     </td>
                   </tr>
                 </tbody>
@@ -122,34 +227,34 @@
             </td>
           </tr>
           <tr>
-            <td><code>$('div').jChester('getSolveTime')</code></td>
+            <td><code class="javascript">$('div').jChester('getSolveTime')</code></td>
             <td>
               Returns the current SolveTime, which may be null.
             </td>
           </tr>
           <tr>
-            <td><code>$('div').jChester('setSolveTime', SolveTime)</code></td>
+            <td><code class="javascript">$('div').jChester('setSolveTime', SolveTime)</code></td>
             <td>
               Set the current SolveTime, may be null.
             </td>
           </tr>
           <tr>
-            <td><code>$.stopwatchFormatToSolveTime(String)</code></td>
+            <td><code class="javascript">$.stopwatchFormatToSolveTime(String)</code></td>
             <td>
               Converts a stopwatch formatted string to a SolveTime. Throws an
               exception if the stopwatch format is invalid.
               <br>Example:<br>
-              <pre>&gt; $.stopwatchFormatToSolveTime("1:4.242")
-{ millis: 64242, decimals: 3 }</pre>
+              <pre><code class="javascript">&gt; $.stopwatchFormatToSolveTime("1:4.242")
+{ millis: 64242, decimals: 3 }</code></pre>
             </td>
           </tr>
           <tr>
-            <td><code>$.solveTimeToStopwatchFormat(SolveTime)</code></td>
+            <td><code class="javascript">$.solveTimeToStopwatchFormat(SolveTime)</code></td>
             <td>
               Converts a SolveTime to a pretty stopwatch formatted string.
               <br>Example:<br>
-              <pre>&gt; $.solveTimeToStopwatchFormat({ millis: 64242, decimals: 3 })
-"1:4.242"</pre>
+              <pre><code class="javascript">&gt; $.solveTimeToStopwatchFormat({ millis: 64242, decimals: 3 })
+"1:4.242"</code></pre>
             </td>
           </tr>
         </tbody>
