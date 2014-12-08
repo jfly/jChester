@@ -1,5 +1,5 @@
 /*
- *  jChester - v0.4.1
+ *  jChester - v0.4.2
  *  A time entry component for speedcubing solves.
  *  https://github.com/jfly/jChester
  *
@@ -51,10 +51,8 @@
       // Create puzzlesSolvedCount field
       data.$form.append($('<div class="form-group"><input name="puzzlesSolvedCount" min="0" type="number" class="form-control"></input></div>'));
 
-      data.$form.append(document.createTextNode(' / '));
-
       // Create puzzlesAttemptedCount field
-      data.$form.append($('<div class="form-group"><input name="puzzlesAttemptedCount" min="0" type="number" class="form-control"></input></div>'));
+      data.$form.append($('<div class="form-group">&nbsp;/&nbsp;<input name="puzzlesAttemptedCount" min="0" type="number" class="form-control"></input></div>'));
 
       data.$form.append($('<span class="help-block">'));
 
@@ -177,7 +175,7 @@
     data.editableSolveTimeFields = settings.editableSolveTimeFields;
     editableSolveTimeFieldOptions.forEach(function(field) {
       var fieldVisible = !!data.editableSolveTimeFields[field];
-      data.$form.find('input[name="' + field + '"]').toggle(fieldVisible);
+      data.$form.find('input[name="' + field + '"]').parent().toggle(fieldVisible);
     });
 
     setSolveTime(settings.solveTime);
