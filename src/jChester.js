@@ -137,7 +137,9 @@
 
       this.attr("tabindex", "-1");
       this.focus(function(e) {
-        $(this).find('input').first().focus();
+        var $input = $(this).find('input').first();
+        $input.focus();
+        $input.select();
       });
     }
 
