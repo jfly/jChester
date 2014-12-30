@@ -182,7 +182,7 @@
 
       this.attr("tabindex", "-1");
       this.focus(function(e) {
-        var $input = $(this).find('input').first();
+        var $input = $(this).find('input:visible').first();
         $input.focus();
         $input.select();
       });
