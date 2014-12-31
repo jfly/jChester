@@ -238,7 +238,7 @@
 
       this.attr("tabindex", "-1");
       this.focus(function(e) {
-        var $input = $(this).find('input:visible').first();
+        var $input = $(this).find('input:visible:not([readonly])').first();
         $input.focus();
         $input.select();
       });
