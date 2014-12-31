@@ -117,8 +117,6 @@
             $inputMillisMask.val(mask);
 
             millisStr = newClockFormat.replace(/ /g, "0");
-            console.log(millisStr);//<<<
-            console.log(mask);//<<<
           } else {
             // Only bother setting the value if it's really neccessary.
             // This way we don't screw up a user who has moved back to edit
@@ -239,10 +237,6 @@
             that.trigger("solveTimeInput", [data.solveTime]);
             e.preventDefault();
           }
-        }
-        if(e.which === 13) { // return
-          data.inputChanged();
-          that.trigger("solveTimeChange", [data.solveTime]);
         }
       });
 
