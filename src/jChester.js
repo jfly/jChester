@@ -270,11 +270,11 @@
 
       if(isMoveCount) {
         if(!isInt(stopwatchFormat)) {
-          throw "Invalid move count";
+          throw "Invalid move count.";
         }
         var moveCount = parseInt(stopwatchFormat);
         if(moveCount <= 0) {
-          throw "Move count must be greater than zero";
+          throw "Move count must be greater than zero.";
         }
         return {
           moveCount: moveCount,
@@ -283,7 +283,7 @@
 
       var m = stopwatchFormat.match(/^(?:(\d*):)?(\d+)(?:[.,](\d*))?$/);
       if(!m) {
-        throw "Invalid stopwatch format";
+        throw "Invalid stopwatch format.";
       }
 
       var minutes = parseInt(m[1] || "0");
