@@ -116,7 +116,9 @@
             $inputMillis.val(newClockFormat.replace(/[.:]/g, " "));
             $inputMillisMask.val(mask);
 
-            millisStr = newClockFormat;
+            millisStr = newClockFormat.replace(/ /g, "0");
+            console.log(millisStr);//<<<
+            console.log(mask);//<<<
           } else {
             // Only bother setting the value if it's really neccessary.
             // This way we don't screw up a user who has moved back to edit
@@ -319,7 +321,6 @@
   var MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
   $.extend({
     stopwatchFormatToSolveTime: function(stopwatchFormat, isMoveCount) {
-      stopwatchFormat = stopwatchFormat.replace(/ /g, "");
       if(stopwatchFormat.length === 0) {
         throw "Input must be nonempty.";
       }
@@ -358,7 +359,7 @@
       var seconds = parseInt(m[2] || "0");
       var decimalStr = m[3] || "";
       var decimal = parseInt(decimalStr || "0");
-      var denominator = Math.pow(10, decimal.toString().length - 3); /* subtract 3 to get millis instead of seconds */
+      var denominator = Math.pow(10, decimalStr.length - 3); /* subtract 3 to get millis instead of seconds */
       var decimalValueInMillis = !decimal ? 0 : Math.round(decimal / denominator);
 
       var millis = minutes * MILLIS_PER_MINUTE + seconds * MILLIS_PER_SECOND + decimalValueInMillis;
