@@ -76,7 +76,7 @@
         if(data.editableSolveTimeFields.moveCount) {
           var moveCountStr = data.$form.find('input[name="moveCount"]').val();
           try {
-            $.extend(solveTime, $.stopwatchFormatToSolveTime(moveCountStr));
+            $.extend(solveTime, $.stopwatchFormatToSolveTime(moveCountStr, true));
           } catch(e) {
             if(moveCountStr.length === 0) {
               errorByField.moveCount = "Please enter a number of moves.";
@@ -198,8 +198,29 @@
         data.$form.find('input[name="puzzlesAttemptedCount"]').val('');
         data.inputChanged();
       } else if(solveTime) {
-        data.$form.find('input[name="millis"]').val($.solveTimeToStopwatchFormat(solveTime));
-        data.$form.find('input[name="moveCount"]').val(solveTime.moveCount);
+        var dnStr = "";
+        if($.solveTimeIsDNF(solveTime)) {
+          dnStr = "DNF";
+        } else if($.solveTimeIsDNS(solveTime)) {
+          dnStr = "DNS";
+        }
+
+        var millisStr;
+        if(solveTime.millis) {
+          millisStr = $.solveTimeToStopwatchFormat(solveTime, true);
+        } else {
+          millisStr = dnStr;
+        }
+        data.$form.find('input[name="millis"]').val(millisStr);
+
+        var moveCountStr;
+        if(solveTime.moveCount) {
+          moveCountStr = solveTime.moveCount;
+        } else {
+          moveCountStr = dnStr;
+        }
+        data.$form.find('input[name="moveCount"]').val(moveCountStr);
+
         data.$form.find('input[name="puzzlesSolvedCount"]').val(solveTime.puzzlesSolvedCount);
         data.$form.find('input[name="puzzlesAttemptedCount"]').val(solveTime.puzzlesAttemptedCount);
         data.inputChanged();
@@ -319,11 +340,13 @@
       }
       return false;
     },
-    solveTimeToStopwatchFormat: function(solveTime) {
-      if($.solveTimeIsDNF(solveTime)) {
-        return "DNF";
-      } else if($.solveTimeIsDNS(solveTime)) {
-        return "DNS";
+    solveTimeToStopwatchFormat: function(solveTime, ignoreDn) {
+      if(!ignoreDn) {
+        if($.solveTimeIsDNF(solveTime)) {
+          return "DNF";
+        } else if($.solveTimeIsDNS(solveTime)) {
+          return "DNS";
+        }
       }
 
       var millis = solveTime.millis;
