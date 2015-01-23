@@ -322,7 +322,7 @@
 
   var MILLIS_PER_SECOND = 1000;
   var MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
-  var MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;;
+  var MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
   $.extend({
     stopwatchFormatToSolveTime: function(stopwatchFormat, isMoveCount) {
       if(stopwatchFormat.length === 0) {
