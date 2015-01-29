@@ -164,7 +164,6 @@
         var puzzlesAttemptedCountStr;
         data.hideField = {};
         if(!solveTime) {
-          //<<<
           puzzlesSolvedCountStr = null;
           puzzlesAttemptedCountStr = null;
           data.hideField.puzzlesSolvedCount = true;
