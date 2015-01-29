@@ -1,5 +1,5 @@
 /*
- *  jChester - v0.7.0
+ *  jChester - v0.7.1
  *  A time entry component for speedcubing solves.
  *  https://github.com/jfly/jChester
  *
@@ -172,7 +172,6 @@
         var puzzlesAttemptedCountStr;
         data.hideField = {};
         if(!solveTime) {
-          //<<<
           puzzlesSolvedCountStr = null;
           puzzlesAttemptedCountStr = null;
           data.hideField.puzzlesSolvedCount = true;
