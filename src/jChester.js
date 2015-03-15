@@ -23,10 +23,10 @@
     var that = this;
     var settings = $.extend({}, $.fn.jChester.defaults, _settings);
 
-    var data = this.data('datepicker');
+    var data = this.data('jChesterData');
     if(!data) {
       data = {};
-      this.data('datepicker', data);
+      this.data('jChesterData', data);
 
       data.$form = $('<form class="form-inline" role="form">');
       that.append(data.$form);
