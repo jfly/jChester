@@ -6,8 +6,9 @@
     return;
   }
 
-  var INPUT_WIDTH_PIXELS = 80;
+  var INPUT_WIDTH_PIXELS = 90;
   var INTEGER_INPUT_WIDTH_PIXELS = 45; // Enough for 3 digits, which is *plenty*
+  var MAX_TIME_CHARACTERS = "1:00:00.00".length;
 
   $.fn.jChester = function(method, _settings) {
     if(!this.is('div')) {
@@ -45,6 +46,7 @@
         fontFamily: 'monospace',
         textAlign: 'right',
       });
+      data.$form.find('input[name="millis"]').attr("maxlength", MAX_TIME_CHARACTERS);
 
       // Create moveCount field
       data.$form.append($('<div class="form-group"><input name="moveCount" type="text" class="form-control"></input></div>'));
